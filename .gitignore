@@ -1,1 +1,6 @@
-/lambda/build/
+/lambda/*/build/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
