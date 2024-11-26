@@ -32,10 +32,12 @@ resource "aws_api_gateway_integration_response" "integration_response" {
   resource_id = aws_api_gateway_resource.resource.id
   http_method = aws_api_gateway_method.method.http_method
   status_code = aws_api_gateway_method_response.response_200.status_code
-
   response_templates = {
     "application/json" = ""
   }
+  depends_on = [
+    aws_api_gateway_integration.integration
+  ]
 }
 
 resource "aws_lambda_permission" "permission" {

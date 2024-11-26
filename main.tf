@@ -12,7 +12,7 @@ module "iam_vectorize_lambda" {
   role_name = "vectorize_lambda_execution_role"
 }
 
-module "chat_lambda" {
+module "lambda_chat" {
   source                = "./modules/lambda"
   zip_file              = "./services/chat/lambda_function.zip"
   function_name         = "chat_lambda"
@@ -20,17 +20,12 @@ module "chat_lambda" {
   environment_variables = { OPENAI_API_KEY = var.openai_api_key }
 }
 
-module "vectorize_lambda" {
+module "lambda_vectorize" {
   source                = "./modules/lambda"
   zip_file              = "./services/vectorize/lambda_function.zip"
   function_name         = "vectorize_lambda"
   lambda_role_arn       = module.iam_vectorize_lambda.lambda_role_arn
-  environment_variables = {
-    AURORA_PORT     = "5432"
-    AURORA_USER     = var.db_user
-    AURORA_PASSWORD = var.db_password
-    AURORA_DB_NAME  = var.db_name
-  }
+  environment_variables = {}
 }
 
 module "api_gateway" {
@@ -45,18 +40,8 @@ module "api_gateway_resource_chat" {
   rest_api_root_resource_id = module.api_gateway.rest_api_root_resource_id
   rest_api_execution_arn    = module.api_gateway.rest_api_execution_arn
   resource_path             = "chat"
-  lambda_arn                = module.chat_lambda.lambda_arn
-  lambda_invoke_arn         = module.chat_lambda.lambda_invoke_arn
-}
-
-module "api_gateway_resource_vectorize" {
-  source                    = "./modules/api_gateway_resource"
-  rest_api_id               = module.api_gateway.rest_api_id
-  rest_api_root_resource_id = module.api_gateway.rest_api_root_resource_id
-  rest_api_execution_arn    = module.api_gateway.rest_api_execution_arn
-  resource_path             = "vectorize"
-  lambda_arn                = module.vectorize_lambda.lambda_arn
-  lambda_invoke_arn         = module.vectorize_lambda.lambda_invoke_arn
+  lambda_arn                = module.lambda_chat.lambda_arn
+  lambda_invoke_arn         = module.lambda_chat.lambda_invoke_arn
 }
 
 module "api_gateway_deployment" {
@@ -64,7 +49,6 @@ module "api_gateway_deployment" {
   rest_api_id = module.api_gateway.rest_api_id
   stage_name  = var.stage_name
   depends_on = [
-    module.api_gateway_resource_chat.created,
-    module.api_gateway_resource_vectorize.created
+    module.api_gateway_resource_chat.created
   ]
 }
