@@ -1,40 +1,40 @@
-variable "aws_region" {
+variable "AWS_REGION" {
   description = "AWSリージョン"
   default     = "ap-northeast-1"
 }
 
-variable "bucket_name" {
+variable "BUCKET_NAME" {
   description = "Name of S3 bucket"
   default     = "marcy-dev-rag-document"
 }
 
-variable "lambda_function_name" {
+variable "LAMBDA_FUNCTION_NAME" {
   description = "Lambda関数の名前"
   default     = "my_lambda_function"
 }
 
-variable "openai_api_key" {
+variable "OPENAI_API_KEY" {
   description = "OpenAI APIキー"
   type        = string
   sensitive   = true
 }
 
-variable "stage_name" {
+variable "STAGE_NAME" {
   description = "Name of the API Gateway stage"
   type        = string
 }
 
-variable "aurora_master_username" {
+variable "AURORA_MASTER_USERNAME" {
   description = "Aurora PostgreSQLクラスターのマスターユーザー名"
   type        = string
 }
 
-variable "aurora_database_name" {
+variable "AURORA_DATABASE_NAME" {
   description = "Aurora PostgreSQLデータベース名"
   type        = string
 }
 
-variable "aurora_master_password" {
+variable "AURORA_MASTER_PASSWORD" {
   description = "Aurora PostgreSQLクラスターのマスターパスワード"
   type        = string
   sensitive   = true
