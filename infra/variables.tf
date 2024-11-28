@@ -16,6 +16,7 @@ variable "lambda_function_name" {
 variable "openai_api_key" {
   description = "OpenAI APIキー"
   type        = string
+  sensitive   = true
 }
 
 variable "stage_name" {
