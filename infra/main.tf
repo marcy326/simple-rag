@@ -14,18 +14,18 @@ module "iam_vectorize_lambda" {
 
 module "lambda_chat" {
   source                = "./modules/lambda"
-  zip_file              = "./services/chat/lambda_function.zip"
   function_name         = "chat_lambda"
   lambda_role_arn       = module.iam_chat_lambda.lambda_role_arn
   environment_variables = { OPENAI_API_KEY = var.openai_api_key }
+  timeout = 60
 }
 
 module "lambda_vectorize" {
   source                = "./modules/lambda"
-  zip_file              = "./services/vectorize/lambda_function.zip"
   function_name         = "vectorize_lambda"
   lambda_role_arn       = module.iam_vectorize_lambda.lambda_role_arn
   environment_variables = {}
+  timeout = 60
 }
 
 module "api_gateway" {
@@ -50,11 +50,11 @@ module "network" {
   subnet_cidr = "10.20.1.0/24"
 }
 
-module "rds" {
-  source                   = "./modules/rds"
-  aurora_master_username   = var.aurora_master_username
-  aurora_database_name     = var.aurora_database_name
-  aurora_master_password   = var.aurora_master_password
-  security_group_id        = module.network.security_group_id
-  subnet_ids               = module.network.subnet_ids
-}
+# module "rds" {
+#   source                   = "./modules/rds"
+#   aurora_master_username   = var.aurora_master_username
+#   aurora_database_name     = var.aurora_database_name
+#   aurora_master_password   = var.aurora_master_password
+#   security_group_id        = module.network.security_group_id
+#   subnet_ids               = module.network.subnet_ids
+# }

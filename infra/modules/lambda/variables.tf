@@ -1,8 +1,3 @@
-variable "zip_file" {
-  description = "Path to the Lambda ZIP file"
-  type        = string
-}
-
 variable "function_name" {
   description = "Name of the Lambda function"
   type        = string
@@ -20,5 +15,7 @@ variable "environment_variables" {
 }
 
 variable "timeout" {
-  default = 60
+  description = "Timeout for the Lambda function in seconds"
+  type        = number
+  default     = 3
 }

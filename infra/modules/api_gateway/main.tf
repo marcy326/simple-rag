@@ -65,7 +65,7 @@ resource "aws_api_gateway_deployment" "deployment" {
         create_before_destroy = true
     }
     depends_on = [ 
-      aws_api_gateway_method.method
+      aws_api_gateway_integration_response.integration_response
     ]
 }
 
