@@ -1,4 +1,4 @@
-/services/*/build/
+/backend/*/build/
 .terraform/
 *.tfstate
 *.tfstate.*
