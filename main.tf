@@ -32,23 +32,29 @@ module "api_gateway" {
   source            = "./modules/api_gateway"
   api_name          = "LambdaAPI"
   api_description   = "API Gateway for Lambda"
-}
-
-module "api_gateway_resource_chat" {
-  source                    = "./modules/api_gateway_resource"
-  rest_api_id               = module.api_gateway.rest_api_id
-  rest_api_root_resource_id = module.api_gateway.rest_api_root_resource_id
-  rest_api_execution_arn    = module.api_gateway.rest_api_execution_arn
   resource_path             = "chat"
   lambda_arn                = module.lambda_chat.lambda_arn
   lambda_invoke_arn         = module.lambda_chat.lambda_invoke_arn
+  stage_name  = var.stage_name
 }
 
-module "api_gateway_deployment" {
-  source      = "./modules/api_gateway_deployment"
-  rest_api_id = module.api_gateway.rest_api_id
-  stage_name  = var.stage_name
-  depends_on = [
-    module.api_gateway_resource_chat.created
-  ]
+module "s3" {
+  source      = "./modules/s3"
+  bucket_name = var.bucket_name
+  lambda_arn  = module.lambda_vectorize.lambda_arn
+}
+
+module "network" {
+  source      = "./modules/network"
+  vpc_cidr    = "10.20.0.0/16"
+  subnet_cidr = "10.20.1.0/24"
+}
+
+module "rds" {
+  source                   = "./modules/rds"
+  aurora_master_username   = var.aurora_master_username
+  aurora_database_name     = var.aurora_database_name
+  aurora_master_password   = var.aurora_master_password
+  security_group_id        = module.network.security_group_id
+  subnet_ids               = module.network.subnet_ids
 }

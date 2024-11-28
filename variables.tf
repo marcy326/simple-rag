@@ -3,6 +3,11 @@ variable "aws_region" {
   default     = "ap-northeast-1"
 }
 
+variable "bucket_name" {
+  description = "Name of S3 bucket"
+  default     = "marcy-dev-rag-document"
+}
+
 variable "lambda_function_name" {
   description = "Lambda関数の名前"
   default     = "my_lambda_function"
@@ -13,22 +18,23 @@ variable "openai_api_key" {
   type        = string
 }
 
-variable "db_user" {
-  description = "データベースのユーザー名"
-  type        = string
-}
-
-variable "db_password" {
-  description = "データベースのパスワード"
-  type        = string
-}
-
-variable "db_name" {
-  description = "データベース名"
-  type        = string
-}
-
 variable "stage_name" {
   description = "Name of the API Gateway stage"
   type        = string
+}
+
+variable "aurora_master_username" {
+  description = "Aurora PostgreSQLクラスターのマスターユーザー名"
+  type        = string
+}
+
+variable "aurora_database_name" {
+  description = "Aurora PostgreSQLデータベース名"
+  type        = string
+}
+
+variable "aurora_master_password" {
+  description = "Aurora PostgreSQLクラスターのマスターパスワード"
+  type        = string
+  sensitive   = true
 }
