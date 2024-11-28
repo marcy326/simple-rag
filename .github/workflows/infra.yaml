@@ -1,0 +1,38 @@
+name: Infrastructure CI/CD Pipeline
+
+on:
+  push:
+    paths:
+      - 'infra/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # コードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Terraformのセットアップ
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
+
+      # Terraformの初期化とPlan
+      - name: Plan Terraform
+        run: |
+          cd infra
+          terraform init -backend-config=envs/dev/dev.tfbackend
+          terraform plan -var-file=envs/dev/terraform.dev.tfvars
+
+      # TerraformのApply
+      - name: Plan Terraform (Production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd infra
+          terraform apply -var-file=envs/dev/terraform.dev.tfvars -auto-approve
