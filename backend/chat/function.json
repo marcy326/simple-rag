@@ -1,0 +1,24 @@
+{
+  "Architectures": [
+    "x86_64"
+  ],
+  "EphemeralStorage": {
+    "Size": 512
+  },
+  "FunctionName": "chat_lambda",
+  "Handler": "lambda_function.lambda_handler",
+  "LoggingConfig": {
+    "LogFormat": "Text",
+    "LogGroup": "/aws/lambda/chat_lambda"
+  },
+  "MemorySize": 128,
+  "Role": "arn:aws:iam::877216539527:role/chat_lambda_execution_role",
+  "Runtime": "python3.11",
+  "SnapStart": {
+    "ApplyOn": "None"
+  },
+  "Timeout": 60,
+  "TracingConfig": {
+    "Mode": "PassThrough"
+  }
+}
