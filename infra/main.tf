@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region
+  region = var.AWS_REGION
 }
 
 module "iam_chat_lambda" {
@@ -16,7 +16,7 @@ module "lambda_chat" {
   source                = "./modules/lambda"
   function_name         = "chat_lambda"
   lambda_role_arn       = module.iam_chat_lambda.lambda_role_arn
-  environment_variables = { OPENAI_API_KEY = var.openai_api_key }
+  environment_variables = { OPENAI_API_KEY = var.OPENAI_API_KEY }
   timeout               = 60
 }
 
@@ -35,12 +35,12 @@ module "api_gateway" {
   resource_path     = "chat"
   lambda_arn        = module.lambda_chat.lambda_arn
   lambda_invoke_arn = module.lambda_chat.lambda_invoke_arn
-  stage_name        = var.stage_name
+  stage_name        = var.STAGE_NAME
 }
 
 module "s3" {
   source      = "./modules/s3"
-  bucket_name = var.bucket_name
+  bucket_name = var.BUCKET_NAME
   lambda_arn  = module.lambda_vectorize.lambda_arn
 }
 
@@ -52,9 +52,9 @@ module "network" {
 
 module "rds" {
   source                 = "./modules/rds"
-  aurora_master_username = var.aurora_master_username
-  aurora_database_name   = var.aurora_database_name
-  aurora_master_password = var.aurora_master_password
+  aurora_master_username = var.AURORA_MASTER_USERNAME
+  aurora_database_name   = var.AURORA_DATABASE_NAME
+  aurora_master_password = var.AURORA_MASTER_PASSWORD
   security_group_id      = module.network.security_group_id
   subnet_ids             = module.network.subnet_ids
 }
