@@ -1,1 +1,3 @@
-path = "envs/dev/terraform.tfstate"
+bucket  = "marcy-dev-terraform"
+key    = "backend/dev.tfstate"
+region  = "ap-northeast-1"
