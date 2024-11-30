@@ -1,0 +1,3 @@
+bucket  = "marcy-prd-terraform"
+key    = "backend/prd.tfstate"
+region  = "ap-northeast-1"
