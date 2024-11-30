@@ -13,7 +13,7 @@ jobs:
   validate-and-deploy:
     runs-on: ubuntu-latest
 
-    environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+    environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
     steps:
       # コードをチェックアウト
@@ -26,34 +26,28 @@ jobs:
         with:
           terraform_version: 1.5.6
 
+      - name: Download tfvars from S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp s3://marcy-dev-terraform/variables/${{ vars.env }}.tfvars ./${{ vars.env }}.tfvars
+
       # Terraformの初期化とPlan
       - name: Plan Terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TF_VAR_aurora_master_password: ${{ secrets.TF_VAR_AURORA_MASTER_PASSWORD }}
-          TF_VAR_openai_api_key: ${{ secrets.TF_VAR_OPENAI_API_KEY }}
-          TF_VAR_aurora_database_name: ${{ env.TF_VAR_AURORA_DATABASE_NAME }}
-          TF_VAR_aurora_master_username: ${{ env.TF_VAR_AURORA_MASTER_USERNAME }}
-          TF_VAR_aws_region: ${{ env.TF_VAR_AWS_REGION }}
-          TF_VAR_stage_name: ${{ env.TF_VAR_STAGE_NAME }}
         run: |
           cd infra
-          terraform init -backend-config=envs/dev/dev.tfbackend
-          terraform plan
+          terraform init -backend-config=envs/${{ vars.env }}/${{ vars.env }}.tfbackend
+          terraform plan -var-file=../${{ vars.env }}.tfvars
 
       # TerraformのApply
-      - name: Plan Terraform (Production)
-        if: github.ref == 'refs/heads/main'
+      - name: Apply Terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TF_VAR_aurora_master_password: ${{ secrets.TF_VAR_AURORA_MASTER_PASSWORD }}
-          TF_VAR_openai_api_key: ${{ secrets.TF_VAR_OPENAI_API_KEY }}
-          TF_VAR_aurora_database_name: ${{ env.TF_VAR_AURORA_DATABASE_NAME }}
-          TF_VAR_aurora_master_username: ${{ env.TF_VAR_AURORA_MASTER_USERNAME }}
-          TF_VAR_aws_region: ${{ env.TF_VAR_AWS_REGION }}
-          TF_VAR_stage_name: ${{ env.TF_VAR_STAGE_NAME }}
         run: |
           cd infra
-          terraform apply -auto-approve
+          terraform apply -var-file=../${{ vars.env }}.tfvars -auto-approve
