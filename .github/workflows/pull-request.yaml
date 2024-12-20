@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       infra_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'infra') }}
-      backend_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'backend') }}
     steps: 
       - id: changed-files
         uses: tj-actions/changed-files@v45
