@@ -32,7 +32,7 @@ jobs:
     with:
       environment: ${{ env.environment }}
 
-  backend-deploy-after-infra-deployment
+  backend-deploy-after-infra-deployment:
     runs-on: ubuntu-latest
     needs: [changed-files, infra-deploy]
     if: ${{ needs.changed-files.outputs.infra_changed }}
