@@ -13,9 +13,12 @@ env:
   environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
 jobs:
-  Get changed files:
-    id: changed-files
-    uses: tj-actions/changed-files@v45
+  changed-files:
+    outputs:
+      modified_file: ${{ steps.changed-files.outputs.modified_files }}
+    steps: 
+      - id: changed-files
+        uses: tj-actions/changed-files@v45
   
   Infra validate workflow:
     needs: changed-files
@@ -27,4 +30,4 @@ jobs:
         with:
           environment: ${{ env.environment }}
     env:
-      infra_changed: ${{ contains(jobs.changed-files.outputs.modified_files, 'infra') }}
+      infra_changed: ${{ contains(needs.changed-files.outputs.modified_files, 'infra') }}
