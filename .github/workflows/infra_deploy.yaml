@@ -1,4 +1,4 @@
-name: Infrastructure CI/CD Pipeline
+name: Infrastructure Deploy
 
 on:
   workflow_call:
@@ -13,7 +13,7 @@ on:
         required: true
 
 jobs:
-  validate-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
@@ -37,21 +37,15 @@ jobs:
       - name: Setup tfvarenv
         uses: marcy326/tfvarenv@v0
         with:
-          version: v0.3.2
+          version: v0.3.3
     
       - name: Setup tfvarenv environment
         run: |
           cd infra
           tfvarenv use ${{ inputs.environment }}
       
-      - name: Plan Terraform
-        run: |
-          cd infra
-          tfvarenv plan ${{ inputs.environment }} --remote
-      
       # TerraformのApply
       - name: Apply Terraform
-        if: github.event_name == 'push'
         run: |
           cd infra
           tfvarenv apply ${{ inputs.environment }} --remote --auto-approve

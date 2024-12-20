@@ -1,0 +1,50 @@
+name: Infrastructure Validate
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      # コードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Terraformのセットアップ
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      
+      - name: Setup tfvarenv
+        uses: marcy326/tfvarenv@v0
+        with:
+          version: v0.3.3
+    
+      - name: Setup tfvarenv environment
+        run: |
+          cd infra
+          tfvarenv use ${{ inputs.environment }}
+      
+      - name: Plan Terraform
+        run: |
+          cd infra
+          tfvarenv plan ${{ inputs.environment }} --remote
