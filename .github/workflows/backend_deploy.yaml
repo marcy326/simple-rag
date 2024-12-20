@@ -13,6 +13,27 @@ on:
         required: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      # コードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # バックエンドのビルド
+      - name: Build Chat Backend
+        run: |
+          cd backend
+          chmod +x ./build.sh
+          ./build.sh chat
+          
+      - name: Build Vectorize Backend
+        run: |
+          cd backend
+          chmod +x ./build.sh
+          ./build.sh vectorize
+
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}

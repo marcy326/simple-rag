@@ -1,0 +1,30 @@
+name: CI/CD Pipeline - Pull Request
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'infra/**'
+      - '.github/workflows/**'
+
+env:
+  environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
+
+jobs:
+  Get changed files:
+    id: changed-files
+    uses: tj-actions/changed-files@v45
+  
+  Infra validate workflow:
+    needs: changed-files
+    if: ${{ infra_changed }}
+    steps:
+      - name: Infra validate
+        uses: ./.github/workflows/infra_validate.yaml
+        secrets: inherit
+        with:
+          environment: ${{ env.environment }}
+    env:
+      infra_changed: ${{ contains(jobs.changed-files.outputs.modified_files, 'infra') }}
