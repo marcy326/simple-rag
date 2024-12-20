@@ -37,7 +37,7 @@ jobs:
       - name: Setup tfvarenv
         uses: marcy326/tfvarenv@v0
         with:
-          version: v0.3.2
+          version: v0.3.3
     
       - name: Setup tfvarenv environment
         run: |
@@ -48,10 +48,3 @@ jobs:
         run: |
           cd infra
           tfvarenv plan ${{ inputs.environment }} --remote
-      
-      # TerraformのApply
-      - name: Apply Terraform
-        if: github.event_name == 'push'
-        run: |
-          cd infra
-          tfvarenv apply ${{ inputs.environment }} --remote --auto-approve
