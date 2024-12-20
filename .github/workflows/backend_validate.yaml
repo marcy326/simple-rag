@@ -25,11 +25,11 @@ jobs:
       - name: Build Backend
         run: |
           cd backend/chat
-          chmod +x ../../build.sh
-          ../../build.sh chat
+          chmod +x ./build.sh
+          ./build.sh chat
           
       - name: Build Vectorize Backend
         run: |
-          cd backend/vectorize
-          chmod +x ../../build.sh
-          ../../build.sh vectorize
+          cd backend
+          chmod +x ./build.sh
+          ./build.sh vectorize
