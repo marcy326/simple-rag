@@ -53,9 +53,9 @@ jobs:
       - name: Deploy Chat Lambda
         run: |
           cd backend/chat
-          lambroll deploy --function chat_lambda --config function.json --zipfile lambda_function.zip
+          lambroll deploy --src="lambda_function.zip"
       
       - name: Deploy Vectorize Lambda
         run: |
           cd backend/vectorize
-          lambroll deploy --function vectorize_lambda --config function.json --zipfile lambda_function.zip
+          lambroll deploy --src="lambda_function.zip"
