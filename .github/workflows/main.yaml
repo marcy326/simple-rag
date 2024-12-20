@@ -19,9 +19,9 @@ on:
       - '.github/workflows/**'
 
 jobs:
-  # infra verify
-  infra_verify:
-    uses: ./.github/workflows/infra_verify.yaml
+  # infra validate
+  infra_validate:
+    uses: ./.github/workflows/infra_validate.yaml
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'infra')
     secrets: inherit
     with:
