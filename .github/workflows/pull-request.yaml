@@ -1,7 +1,7 @@
 name: CI/CD Pipeline - Pull Request
 
 on:
-  push:
+  pull-request:
     branches:
       - main
       - dev
