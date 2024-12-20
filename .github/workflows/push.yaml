@@ -33,7 +33,6 @@ jobs:
       environment: ${{ env.environment }}
 
   backend-deploy-after-infra-deployment:
-    runs-on: ubuntu-latest
     needs: [changed-files, infra-deploy]
     if: ${{ needs.changed-files.outputs.infra_changed }}
     uses: ./.github/workflows/backend_deploy.yaml
@@ -42,7 +41,6 @@ jobs:
       environment: ${{ env.environment }}
   
   backend-deploy-without-infra-deployment:
-    runs-on: ubuntu-latest
     needs: changed-files
     if: ${{ !needs.changed-files.outputs.infra_changed && needs.changed-files.outputs.backend_changed }}
     uses: ./.github/workflows/backend_deploy.yaml
