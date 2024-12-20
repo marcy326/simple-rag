@@ -23,28 +23,29 @@ jobs:
       - id: changed-files
         uses: tj-actions/changed-files@v45
   
-  Infra deploy workflow:
+  infra-deploy:
     runs-on: ubuntu-latest
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed }}
-    steps:
-      - name: Infra deploy
-        uses: ./.github/workflows/infra_deploy.yaml
-        with:
-          environment: ${{ env.environment }}
-      - name: Backend deploy
-        uses: ./.github/workflows/backend_deploy.yaml
-        with:
-          environment: ${{ env.environment }}
+    uses: ./.github/workflows/infra_deploy.yaml
     secrets: inherit
+    with:
+      environment: ${{ env.environment }}
+
+  backend-deploy-after-infra-deployment
+    runs-on: ubuntu-latest
+    needs: [changed-files, infra-deploy]
+    if: ${{ needs.changed-files.outputs.infra_changed }}
+    uses: ./.github/workflows/backend_deploy.yaml
+    secrets: inherit
+    with:
+      environment: ${{ env.environment }}
   
-  Backend deploy workflow:
+  backend-deploy-without-infra-deployment:
     runs-on: ubuntu-latest
     needs: changed-files
     if: ${{ !needs.changed-files.outputs.infra_changed && needs.changed-files.outputs.backend_changed }}
-    steps:
-      - name: Backend deploy
-        uses: ./.github/workflows/backend_deploy.yaml
-        with:
-          environment: ${{ env.environment }}
+    uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
+    with:
+      environment: ${{ env.environment }}

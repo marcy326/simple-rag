@@ -1,7 +1,7 @@
 name: CI/CD Pipeline - Pull Request
 
 on:
-  pull_request:
+  pull-request:
     branches:
       - main
       - dev
@@ -22,13 +22,11 @@ jobs:
       - id: changed-files
         uses: tj-actions/changed-files@v45
   
-  Infra validate workflow:
+  infra-validate:
     runs-on: ubuntu-latest
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed }}
-    steps:
-      - name: Infra validate
-        uses: ./.github/workflows/infra_validate.yaml
-        with:
-          environment: ${{ env.environment }}
+    uses: ./.github/workflows/infra_validate.yaml
     secrets: inherit
+    with:
+      environment: ${{ env.environment }}
