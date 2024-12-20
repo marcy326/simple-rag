@@ -1,0 +1,38 @@
+name: Backend Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      # コードをチェックアウト
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # lambrollのインストール
+      - name: Install lambroll
+        run: |
+          pip install lambroll
+
+      # Lambda関数のデプロイ
+      - name: Deploy Chat Lambda
+        run: |
+          cd backend/chat
+          lambroll deploy --function chat_lambda --config function.json --zipfile lambda_function.zip
+      
+      - name: Deploy Vectorize Lambda
+        run: |
+          cd backend/vectorize
+          lambroll deploy --function vectorize_lambda --config function.json --zipfile lambda_function.zip

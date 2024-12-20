@@ -1,4 +1,4 @@
-name: Infrastructure CI/CD Pipeline
+name: Infrastructure Validate
 
 on:
   workflow_call:

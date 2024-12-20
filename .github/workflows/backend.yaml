@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Infra
+name: CI/CD Pipeline - Backend
 
 on:
   push:
@@ -6,36 +6,27 @@ on:
       - main
       - dev
     paths:
-      - 'infra/**'
+      - 'backend/**'
       - '.github/workflows/**'
   pull_request:
     branches:
       - main
       - dev
     paths:
-      - 'infra/**'
+      - 'backend/**'
       - '.github/workflows/**'
 
 jobs:
-  # infra validate
-  infra_validate:
-    uses: ./.github/workflows/infra_validate.yaml
+  # backend validate
+  backend_validate:
+    uses: ./.github/workflows/backend_validate.yaml
     if: github.event_name == 'pull_request'
     secrets: inherit
     with:
       environment: ${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
 
-  # infra deploy
-  infra_deploy:
-    uses: ./.github/workflows/infra_deploy.yaml
-    if: github.event_name == 'push'
-    secrets: inherit
-    with:
-      environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
-
-  # backend redeploy after infra deploy
-  backend_redeploy:
-    needs: infra_deploy
+  # backend deploy
+  backend_deploy:
     uses: ./.github/workflows/backend_deploy.yaml
     if: github.event_name == 'push'
     secrets: inherit
