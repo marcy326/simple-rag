@@ -24,7 +24,7 @@ jobs:
       # バックエンドのビルド
       - name: Build Backend
         run: |
-          cd backend/chat
+          cd backend
           chmod +x ./build.sh
           ./build.sh chat
           
