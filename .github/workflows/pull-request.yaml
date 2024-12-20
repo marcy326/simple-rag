@@ -29,6 +29,6 @@ jobs:
     steps:
       - name: Infra validate
         uses: ./.github/workflows/infra_validate.yaml
-        secrets: inherit
         with:
           environment: ${{ env.environment }}
+    secrets: inherit
