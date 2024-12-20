@@ -1,0 +1,7 @@
+
+*.tfvars
+
+# tfvarenv
+.terraform/
+.tmp/
+.backups/

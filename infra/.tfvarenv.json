@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "default_region": "ap-northeast-1",
+  "environments": {
+    "dev": {
+      "name": "dev",
+      "description": "",
+      "s3": {
+        "bucket": "marcy-dev-terraform",
+        "prefix": "simple-rag",
+        "tfvars_key": "dev.tfvars"
+      },
+      "aws": {
+        "account_id": "877216539527",
+        "region": "ap-northeast-1"
+      },
+      "local": {
+        "tfvars_path": "envs/dev/dev.tfvars"
+      },
+      "deployment": {
+        "auto_backup": true,
+        "require_approval": false
+      },
+      "backend": {
+        "bucket": "marcy-dev-terraform",
+        "key": "simple-rag/terraform.tfstate",
+        "region": "ap-northeast-1"
+      }
+    }
+  }
+}
