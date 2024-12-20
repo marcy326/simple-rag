@@ -21,8 +21,9 @@ jobs:
         uses: tj-actions/changed-files@v45
   
   Infra validate workflow:
+    runs-on: ubuntu-latest
     needs: changed-files
-    if: ${{ infra_changed }}
+    if: ${{ env.infra_changed }}
     steps:
       - name: Infra validate
         uses: ./.github/workflows/infra_validate.yaml
