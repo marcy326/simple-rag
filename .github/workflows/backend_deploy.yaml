@@ -27,12 +27,26 @@ jobs:
           cd backend
           chmod +x ./build.sh
           ./build.sh chat
+          echo "zip_path=$(pwd)/chat/lambda_function.zip" >> $GITHUB_OUTPUT
           
       - name: Build Vectorize Backend
         run: |
           cd backend
           chmod +x ./build.sh
           ./build.sh vectorize
+          echo "zip_path=$(pwd)/vectorize/lambda_function.zip" >> $GITHUB_OUTPUT
+      
+      - name: Upload Chat Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chat-lambda-zip
+          path: ${{ steps.build_chat.outputs.zip_path }}
+      
+      - name: Upload Vectorize Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vectorize-lambda-zip
+          path: ${{ steps.build_vectorize.outputs.zip_path }}
 
   deploy:
     needs: build
@@ -42,6 +56,18 @@ jobs:
       # コードをチェックアウト
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Download Chat Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: chat-lambda-zip
+          path: backend/chat
+      
+      - name: Download Vectorize Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: vectorize-lambda-zip
+          path: backend/vectorize
       
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

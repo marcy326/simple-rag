@@ -14,8 +14,8 @@ jobs:
   changed-files:
     runs-on: ubuntu-latest
     outputs:
-      infra_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'infra') }}
-      backend_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'backend') }}
+      infra_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'infra/') }}
+      backend_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'backend/') }}
     steps: 
       - name: Checkout code
         uses: actions/checkout@v3
