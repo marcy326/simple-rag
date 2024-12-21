@@ -34,7 +34,7 @@ jobs:
 
   backend-deploy-after-infra-deployment:
     needs: [changed-files, infra-deploy]
-    if: ${{ needs.changed-files.outputs.infra_changed }}
+    if: ${{ needs.changed-files.outputs.infra_changed == 'true' }}
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
@@ -42,7 +42,7 @@ jobs:
   
   backend-deploy-without-infra-deployment:
     needs: changed-files
-    if: ${{ !needs.changed-files.outputs.infra_changed && needs.changed-files.outputs.backend_changed }}
+    if: ${{ needs.changed-files.outputs.infra_changed == 'false' && needs.changed-files.outputs.backend_changed == 'true' }}
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
