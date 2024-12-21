@@ -23,6 +23,7 @@ jobs:
 
       # バックエンドのビルド
       - name: Build Chat Backend
+        id: build_chat
         run: |
           cd backend
           chmod +x ./build.sh
@@ -30,6 +31,7 @@ jobs:
           echo "zip_path=$(pwd)/chat/lambda_function.zip" >> $GITHUB_OUTPUT
           
       - name: Build Vectorize Backend
+        id: build_vectorize
         run: |
           cd backend
           chmod +x ./build.sh
@@ -58,13 +60,13 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Download Chat Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: chat-lambda-zip
           path: backend/chat
       
       - name: Download Vectorize Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vectorize-lambda-zip
           path: backend/vectorize
