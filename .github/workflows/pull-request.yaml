@@ -20,7 +20,7 @@ jobs:
   
   infra-validate:
     needs: changed-files
-    if: ${{ needs.changed-files.outputs.infra_changed }}
+    if: ${{ needs.changed-files.outputs.infra_changed == 'true' }}
     uses: ./.github/workflows/infra_validate.yaml
     secrets: inherit
     with:
