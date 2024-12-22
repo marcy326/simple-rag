@@ -28,6 +28,7 @@ jobs:
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed == 'true'  }}
     uses: ./.github/workflows/infra_deploy.yaml
+    secrets: inherit
     with:
       environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
@@ -35,6 +36,7 @@ jobs:
     needs: [changed-files, infra-deploy]
     if: ${{ needs.changed-files.outputs.infra_changed == 'true' }}
     uses: ./.github/workflows/backend_deploy.yaml
+    secrets: inherit
     with:
       environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
   
@@ -42,5 +44,6 @@ jobs:
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed == 'false' && needs.changed-files.outputs.backend_changed == 'true' }}
     uses: ./.github/workflows/backend_deploy.yaml
+    secrets: inherit
     with:
       environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
