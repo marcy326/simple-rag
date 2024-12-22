@@ -4,7 +4,7 @@
   "environments": {
     "dev": {
       "name": "dev",
-      "description": "",
+      "description": "for development",
       "s3": {
         "bucket": "marcy-dev-terraform",
         "prefix": "simple-rag",
@@ -23,6 +23,31 @@
       },
       "backend": {
         "bucket": "marcy-dev-terraform",
+        "key": "simple-rag/terraform.tfstate",
+        "region": "ap-northeast-1"
+      }
+    },
+    "prd": {
+      "name": "prd",
+      "description": "for production",
+      "s3": {
+        "bucket": "marcy-prd-terraform",
+        "prefix": "simple-rag",
+        "tfvars_key": "prd.tfvars"
+      },
+      "aws": {
+        "account_id": "087691425202",
+        "region": "ap-northeast-1"
+      },
+      "local": {
+        "tfvars_path": "envs/prd/prd.tfvars"
+      },
+      "deployment": {
+        "auto_backup": true,
+        "require_approval": true
+      },
+      "backend": {
+        "bucket": "marcy-prd-terraform",
         "key": "simple-rag/terraform.tfstate",
         "region": "ap-northeast-1"
       }
