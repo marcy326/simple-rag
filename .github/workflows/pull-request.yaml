@@ -9,13 +9,9 @@ on:
       - 'infra/**'
       - '.github/workflows/**'
 
-env:
-  environment: ${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
-
 jobs:
   changed-files:
     runs-on: ubuntu-latest
-    environment: ${{ env.environment }}
     outputs:
       infra_changed: ${{ contains(steps.changed-files.outputs.modified_files, 'infra/') }}
     steps: 
@@ -25,8 +21,8 @@ jobs:
   infra-validate:
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed == 'true' }}
-    environment: ${{ env.environment }}
+    environment: ${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
     uses: ./.github/workflows/infra_validate.yaml
     secrets: inherit
     with:
-      environment: ${{ env.environment }}
+      environment: ${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
