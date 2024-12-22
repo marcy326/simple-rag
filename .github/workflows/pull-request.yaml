@@ -24,3 +24,4 @@ jobs:
     uses: ./.github/workflows/infra_validate.yaml
     with:
       environment: ${{ github.event.pull_request.base.ref == 'main' && 'prd' || 'dev' }}
+    secrets: inherit
