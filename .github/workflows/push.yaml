@@ -10,9 +10,8 @@ on:
       - 'backend/**'
       - '.github/workflows/**'
 
-environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 env:
-  env: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
+  environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
 jobs:
   changed-files:
@@ -31,23 +30,26 @@ jobs:
   infra-deploy:
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed == 'true'  }}
+    environment: ${{ env.environment }}
     uses: ./.github/workflows/infra_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ env.environment }}
 
   backend-deploy-after-infra-deployment:
     needs: [changed-files, infra-deploy]
     if: ${{ needs.changed-files.outputs.infra_changed == 'true' }}
+    environment: ${{ env.environment }}
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ env.environment }}
   
   backend-deploy-without-infra-deployment:
     needs: changed-files
     if: ${{ needs.changed-files.outputs.infra_changed == 'false' && needs.changed-files.outputs.backend_changed == 'true' }}
+    environment: ${{ env.environment }}
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ env.environment }}
