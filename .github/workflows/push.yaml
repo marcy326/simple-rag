@@ -10,9 +10,6 @@ on:
       - 'backend/**'
       - '.github/workflows/**'
 
-env:
-  env:  ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
-
 jobs:
   changed-files:
     runs-on: ubuntu-latest
@@ -33,7 +30,7 @@ jobs:
     uses: ./.github/workflows/infra_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
 
   backend-deploy-after-infra-deployment:
     needs: [changed-files, infra-deploy]
@@ -41,7 +38,7 @@ jobs:
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
   
   backend-deploy-without-infra-deployment:
     needs: changed-files
@@ -49,4 +46,4 @@ jobs:
     uses: ./.github/workflows/backend_deploy.yaml
     secrets: inherit
     with:
-      environment: ${{ env.env }}
+      environment: ${{ github.ref_name == 'main' && 'prd' || 'dev' }}
