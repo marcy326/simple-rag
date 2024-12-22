@@ -4,7 +4,7 @@
   "environments": {
     "dev": {
       "name": "dev",
-      "description": "",
+      "description": "for development",
       "s3": {
         "bucket": "marcy-dev-terraform",
         "prefix": "simple-rag",
@@ -29,7 +29,7 @@
     },
     "prd": {
       "name": "prd",
-      "description": "",
+      "description": "for production",
       "s3": {
         "bucket": "marcy-prd-terraform",
         "prefix": "simple-rag",
