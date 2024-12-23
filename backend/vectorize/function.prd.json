@@ -1,0 +1,24 @@
+{
+  "Architectures": [
+    "x86_64"
+  ],
+  "EphemeralStorage": {
+    "Size": 512
+  },
+  "FunctionName": "vectorize_lambda",
+  "Handler": "lambda_function.lambda_handler",
+  "LoggingConfig": {
+    "LogFormat": "Text",
+    "LogGroup": "/aws/lambda/vectorize_lambda"
+  },
+  "MemorySize": 128,
+  "Role": "arn:aws:iam::087691425202:role/vectorize_lambda_execution_role",
+  "Runtime": "python3.11",
+  "SnapStart": {
+    "ApplyOn": "None"
+  },
+  "Timeout": 60,
+  "TracingConfig": {
+    "Mode": "PassThrough"
+  }
+}
