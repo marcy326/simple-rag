@@ -1,6 +1,5 @@
 .lambdaignore
-function.dev.json
-function.prd.json
+function.json
 function.jsonnet
 function_url.json
 function_url.jsonnet
