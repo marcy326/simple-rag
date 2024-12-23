@@ -88,9 +88,9 @@ jobs:
       - name: Deploy Chat Lambda
         run: |
           cd backend/chat
-          lambroll deploy --src="lambda_function.zip"
+          lambroll deploy --function function.${{ inputs.environment }}.json --src="lambda_function.zip"
       
       - name: Deploy Vectorize Lambda
         run: |
           cd backend/vectorize
-          lambroll deploy --src="lambda_function.zip"
+          lambroll deploy --function function.${{ inputs.environment }}.json --src="lambda_function.zip"
