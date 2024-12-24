@@ -1,2 +1,2 @@
-openai==1.55.3
+openai==1.58.1
 fastapi==0.99.0
