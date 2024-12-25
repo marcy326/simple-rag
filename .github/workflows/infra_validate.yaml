@@ -37,7 +37,7 @@ jobs:
       - name: Setup tfvarenv
         uses: marcy326/tfvarenv@v0
         with:
-          version: v0.3.3
+          version: v0.3.4
     
       - name: Setup tfvarenv environment
         run: |
