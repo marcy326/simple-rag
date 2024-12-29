@@ -39,13 +39,3 @@ variable "aurora_master_password" {
   type        = string
   sensitive   = true
 }
-
-variable "s3_bucket_init_db" {
-  description = "Name of the existing S3 bucket for init scripts"
-  type        = string
-}
-
-variable "s3_key_init_db" {
-  description = "Key of S3 object init scripts"
-  default     = "simple-rag/init.sql"
-}
