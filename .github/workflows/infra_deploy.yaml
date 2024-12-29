@@ -55,16 +55,18 @@ jobs:
         run: |
           cd infra
           terraform output -json > output.json
-          echo "OUTPUT_JSON=$(cat output.json)" >> $GITHUB_OUTPUT
+          CLUSTER_ARN=$(jq -r '.cluster_arn.value' output.json)
+          SECRET_ARN=$(jq -r '.secret_arn.value' output.json)
+          DATABASE_NAME=$(jq -r '.database_name.value' output.json)
+          echo "CLUSTER_ARN=$CLUSTER_ARN" >> $GITHUB_OUTPUT
+          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_OUTPUT
+          echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_OUTPUT
       
       - name: Initialize Database
         run: |
-          CLUSTER_ARN=$(echo ${{ steps.terraform_output.outputs.OUTPUT_JSON }} | jq -r '.cluster_arn.value')
-          SECRET_ARN=$(echo ${{ steps.terraform_output.outputs.OUTPUT_JSON }} | jq -r '.secret_arn.value')
-          DATABASE_NAME=$(echo ${{ steps.terraform_output.outputs.OUTPUT_JSON }} | jq -r '.database_name.value')
           SQL_STATEMENT="CREATE EXTENSION IF NOT EXISTS vector; CREATE TABLE IF NOT EXISTS text_embeddings ( id SERIAL PRIMARY KEY, filename TEXT NOT NULL, content TEXT NOT NULL, embedding VECTOR(1536), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );"
           aws rds-data execute-statement \
-            --resource-arn "$CLUSTER_ARN" \
-            --secret-arn "$SECRET_ARN" \
-            --database "$DATABASE_NAME" \
+            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
+            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
             --sql "$SQL_STATEMENT"
