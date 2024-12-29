@@ -30,14 +30,3 @@ resource "aws_db_subnet_group" "subnets" {
   name       = "aurora-pg-subnet-group"
   subnet_ids = var.subnet_ids
 }
-
-resource "null_resource" "db_setup" {
-  depends_on = [
-    aws_rds_cluster.cluster,
-    aws_rds_cluster_instance.instance,
-  ]
-
-  provisioner "local-exec" {
-    command = "export PGPASSWORD=${var.aurora_master_password}; psql -h ${aws_rds_cluster.cluster.endpoint} -U ${var.aurora_master_username} -d ${var.aurora_database_name} -f ./init.sql"
-  }
-}
