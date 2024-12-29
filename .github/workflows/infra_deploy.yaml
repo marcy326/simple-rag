@@ -66,9 +66,13 @@ jobs:
       
       - name: Initialize Database
         run: |
-          SQL_STATEMENT="CREATE EXTENSION IF NOT EXISTS vector; CREATE TABLE IF NOT EXISTS text_embeddings ( id SERIAL PRIMARY KEY, filename TEXT NOT NULL, content TEXT NOT NULL, embedding VECTOR(1536), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );"
           aws rds-data execute-statement \
             --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
             --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
             --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
-            --sql "$SQL_STATEMENT"
+            --sql "CREATE EXTENSION IF NOT EXISTS vector;"
+          aws rds-data execute-statement \
+            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
+            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
+            --sql "CREATE TABLE IF NOT EXISTS text_embeddings ( id SERIAL PRIMARY KEY, filename TEXT NOT NULL, content TEXT NOT NULL, embedding VECTOR(1536), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );"
