@@ -76,16 +76,3 @@ module "rds" {
   security_group_id      = module.network.security_group_id
   subnet_ids             = module.network.subnet_ids
 }
-
-module "ec2" {
-  source                 = "./modules/ec2"
-  bucket_name            = var.s3_bucket_init_db
-  s3_key                 = var.s3_key_init_db
-  vpc_id                 = module.network.vpc_id
-  aurora_master_username = var.aurora_master_username
-  aurora_database_name   = var.aurora_database_name
-  aurora_master_password = var.aurora_master_password
-  security_group_id      = module.network.security_group_id
-  subnet_ids             = module.network.subnet_ids
-  cluster_endpoint       = module.rds.cluster_endpoint
-}
