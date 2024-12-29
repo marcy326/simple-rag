@@ -1,0 +1,17 @@
+{
+  "cluster_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:rds:ap-northeast-1:877216539527:cluster:aurora-pg-cluster"
+  },
+  "database_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "postgres"
+  },
+  "secret_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:secretsmanager:ap-northeast-1:877216539527:secret:rds!cluster-c44b0be8-a16a-4903-9a99-45660da5a8ee-CiZejP"
+  }
+}

@@ -56,9 +56,9 @@ jobs:
           cd infra
           terraform output -json > output.json
           cat output.json
-          CLUSTER_ARN=$(jq -r '.cluster_arn.value' output.json)
-          SECRET_ARN=$(jq -r '.secret_arn.value' output.json)
-          DATABASE_NAME=$(jq -r '.database_name.value' output.json)
+          CLUSTER_ARN=$(jq -r ".cluster_arn.value" output.json)
+          SECRET_ARN=$(jq -r ".secret_arn.value" output.json)
+          DATABASE_NAME=$(jq -r ".database_name.value" output.json)
           echo "CLUSTER_ARN=$CLUSTER_ARN" >> $GITHUB_OUTPUT
           echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_OUTPUT
           echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_OUTPUT
