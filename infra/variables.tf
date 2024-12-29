@@ -33,9 +33,3 @@ variable "aurora_database_name" {
   description = "Aurora PostgreSQLデータベース名"
   type        = string
 }
-
-variable "aurora_master_password" {
-  description = "Aurora PostgreSQLクラスターのマスターパスワード"
-  type        = string
-  sensitive   = true
-}
