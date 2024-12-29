@@ -1,9 +1,0 @@
-CREATE EXTENSION IF NOT EXISTS vector;
-
-CREATE TABLE IF NOT EXISTS text_embeddings (
-    id SERIAL PRIMARY KEY,
-    filename TEXT NOT NULL,
-    content TEXT NOT NULL,
-    embedding VECTOR(1536),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
