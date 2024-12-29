@@ -3,8 +3,8 @@ resource "aws_rds_cluster" "cluster" {
   engine                              = "aurora-postgresql"
   engine_version                      = "16.3"
   engine_mode                         = "provisioned"
+  manage_master_user_password         = true
   master_username                     = var.aurora_master_username
-  master_password                     = var.aurora_master_password
   port                                = 5432
   database_name                       = var.aurora_database_name
   vpc_security_group_ids              = [var.security_group_id]
@@ -30,15 +30,4 @@ resource "aws_rds_cluster_instance" "instance" {
 resource "aws_db_subnet_group" "subnets" {
   name       = "aurora-pg-subnet-group"
   subnet_ids = var.subnet_ids
-}
-
-resource "null_resource" "db_setup" {
-  depends_on = [
-    aws_rds_cluster.cluster,
-    aws_rds_cluster_instance.instance,
-  ]
-
-  provisioner "local-exec" {
-    command = "export PGPASSWORD=${var.aurora_master_password}; psql -h ${aws_rds_cluster.cluster.endpoint} -U ${var.aurora_master_username} -d ${var.aurora_database_name} -f ./init.sql"
-  }
 }
