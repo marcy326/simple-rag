@@ -59,6 +59,19 @@ jobs:
           echo "SECRET_ARN=$(terraform output -raw secret_arn)" >> $GITHUB_OUTPUT
           echo "DATABASE_NAME=$(terraform output -raw database_name)" >> $GITHUB_OUTPUT
 
+      - name: DB Health Check
+        run: |
+          RETRY_COUNT=30
+          for i in $(seq 1 $RETRY_COUNT); do
+            echo "Attempt $i to check database health..."
+            aws rds-data execute-statement \
+              --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+              --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
+              --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
+              --sql "SELECT 1;" && break
+            sleep 10
+          done
+
       - name: Create Vector Extension
         run: |
           aws rds-data execute-statement \
