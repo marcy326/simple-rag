@@ -16,10 +16,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    outputs:
-      CLUSTER_ARN: ${{ steps.terraform_output.outputs.CLUSTER_ARN }}
-      SECRET_ARN: ${{ steps.terraform_output.outputs.SECRET_ARN }}
-      DATABASE_NAME: ${{ steps.terraform_output.outputs.DATABASE_NAME }}
     steps:
       # コードをチェックアウト
       - name: Checkout code
@@ -54,30 +50,6 @@ jobs:
         run: |
           cd infra
           tfvarenv apply ${{ inputs.environment }} --remote --auto-approve
-
-      - name: Get Terraform Outputs
-        id: terraform_output
-        run: |
-          cd infra
-          # デバッグ用に出力を表示
-          echo "Terraform outputs:"
-          terraform output
-          
-          # 出力を環境変数に設定
-          CLUSTER_ARN=$(terraform output -raw cluster_arn)
-          SECRET_ARN=$(terraform output -raw secret_arn)
-          DATABASE_NAME=$(terraform output -raw database_name)
-          
-          # 値の確認
-          echo "Debug values:"
-          echo "CLUSTER_ARN: $CLUSTER_ARN"
-          echo "SECRET_ARN: $SECRET_ARN"
-          echo "DATABASE_NAME: $DATABASE_NAME"
-          
-          # GitHub Outputsに設定
-          echo "CLUSTER_ARN=$CLUSTER_ARN" >> $GITHUB_OUTPUT
-          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_OUTPUT
-          echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_OUTPUT
       
   init-database:
     needs: deploy
@@ -90,30 +62,29 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
+      
+      - name: Get Terraform Outputs
+        id: terraform_output
+        run: |
+          cd infra
+          echo "CLUSTER_ARN=$(terraform output -raw cluster_arn)" >> $GITHUB_OUTPUT
+          echo "SECRET_ARN=$(terraform output -raw secret_arn)" >> $GITHUB_OUTPUT
+          echo "DATABASE_NAME=$(terraform output -raw database_name)" >> $GITHUB_OUTPUT
 
       - name: Create Vector Extension
         run: |
-          CLUSTER_ARN="${{ needs.deploy.outputs.CLUSTER_ARN }}"
-          SECRET_ARN="${{ needs.deploy.outputs.SECRET_ARN }}"
-          DATABASE_NAME="${{ needs.deploy.outputs.DATABASE_NAME }}"
-          
-          echo "Using values:"
-          echo "CLUSTER_ARN: $CLUSTER_ARN"
-          echo "SECRET_ARN: $SECRET_ARN"
-          echo "DATABASE_NAME: $DATABASE_NAME"
-          
           aws rds-data execute-statement \
-            --resource-arn "$CLUSTER_ARN" \
-            --secret-arn "$SECRET_ARN" \
-            --database "$DATABASE_NAME" \
+            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
+            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
             --sql "CREATE EXTENSION IF NOT EXISTS vector;"
 
       - name: Create Text Embeddings Table
         run: |
           aws rds-data execute-statement \
-            --resource-arn "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
-            --secret-arn "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
-            --database "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
+            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --database "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
             --sql "
               CREATE TABLE IF NOT EXISTS text_embeddings (
                 id SERIAL PRIMARY KEY,
