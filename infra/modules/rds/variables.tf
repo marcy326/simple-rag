@@ -8,12 +8,6 @@ variable "aurora_database_name" {
   type        = string
 }
 
-variable "aurora_master_password" {
-  description = "Aurora PostgreSQL クラスターのマスターパスワード"
-  type        = string
-  sensitive   = true
-}
-
 variable "security_group_id" {
   description = "Aurora PostgreSQLクラスターのセキュリティグループID"
   type        = string

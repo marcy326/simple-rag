@@ -1,6 +1,13 @@
 terraform {
   required_version = "~> 1.10.0"
 
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.80.0"
+    }
+  }
+
   backend "s3" {
   #   bucket = "bucket-name"
   #   key    = "backend/terraform.tfstate"
@@ -61,13 +68,11 @@ module "network" {
   subnet_cidr = "10.20.1.0/24"
 }
 
-# module "rds" {
-#   source                 = "./modules/rds"
-#   aurora_master_username = var.aurora_master_username
-#   aurora_database_name   = var.aurora_database_name
-#   aurora_master_password = var.aurora_master_password
-#   security_group_id      = module.network.security_group_id
-#   subnet_ids             = module.network.subnet_ids
-# }
-
-# This is a placeholder comment. Please remove this line when you are ready to run the workflow.
+module "rds" {
+  source                 = "./modules/rds"
+  aurora_master_username = var.aurora_master_username
+  aurora_database_name   = var.aurora_database_name
+  security_group_id      = module.network.security_group_id
+  subnet_ids             = module.network.subnet_ids
+}
+#
