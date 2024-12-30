@@ -16,6 +16,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    outputs:
+      CLUSTER_ARN: ${{ steps.terraform_output.outputs.CLUSTER_ARN }}
+      SECRET_ARN: ${{ steps.terraform_output.outputs.SECRET_ARN }}
+      DATABASE_NAME: ${{ steps.terraform_output.outputs.DATABASE_NAME }}
     steps:
       # コードをチェックアウト
       - name: Checkout code
