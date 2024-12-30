@@ -93,18 +93,27 @@ jobs:
 
       - name: Create Vector Extension
         run: |
+          CLUSTER_ARN="${{ needs.deploy.outputs.CLUSTER_ARN }}"
+          SECRET_ARN="${{ needs.deploy.outputs.SECRET_ARN }}"
+          DATABASE_NAME="${{ needs.deploy.outputs.DATABASE_NAME }}"
+          
+          echo "Using values:"
+          echo "CLUSTER_ARN: $CLUSTER_ARN"
+          echo "SECRET_ARN: $SECRET_ARN"
+          echo "DATABASE_NAME: $DATABASE_NAME"
+          
           aws rds-data execute-statement \
-            --resource-arn "${{ needs.deploy.outputs.cluster_arn }}" \
-            --secret-arn "${{ needs.deploy.outputs.secret_arn }}" \
-            --database "${{ needs.deploy.outputs.database_name }}" \
+            --resource-arn "$CLUSTER_ARN" \
+            --secret-arn "$SECRET_ARN" \
+            --database "$DATABASE_NAME" \
             --sql "CREATE EXTENSION IF NOT EXISTS vector;"
 
       - name: Create Text Embeddings Table
         run: |
           aws rds-data execute-statement \
-            --resource-arn "${{ needs.deploy.outputs.cluster_arn }}" \
-            --secret-arn "${{ needs.deploy.outputs.secret_arn }}" \
-            --database "${{ needs.deploy.outputs.database_name }}" \
+            --resource-arn "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
+            --database "${{ needs.deploy.outputs.CLUSTER_ARN }}" \
             --sql "
               CREATE TABLE IF NOT EXISTS text_embeddings (
                 id SERIAL PRIMARY KEY,
