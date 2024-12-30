@@ -59,9 +59,25 @@ jobs:
         id: terraform_output
         run: |
           cd infra
-          echo "CLUSTER_ARN=$(terraform output -raw cluster_arn)" >> $GITHUB_OUTPUT
-          echo "SECRET_ARN=$(terraform output -raw secret_arn)" >> $GITHUB_OUTPUT
-          echo "DATABASE_NAME=$(terraform output -raw database_name)" >> $GITHUB_OUTPUT
+          # デバッグ用に出力を表示
+          echo "Terraform outputs:"
+          terraform output
+          
+          # 出力を環境変数に設定
+          CLUSTER_ARN=$(terraform output -raw cluster_arn)
+          SECRET_ARN=$(terraform output -raw secret_arn)
+          DATABASE_NAME=$(terraform output -raw database_name)
+          
+          # 値の確認
+          echo "Debug values:"
+          echo "CLUSTER_ARN: $CLUSTER_ARN"
+          echo "SECRET_ARN: $SECRET_ARN"
+          echo "DATABASE_NAME: $DATABASE_NAME"
+          
+          # GitHub Outputsに設定
+          echo "CLUSTER_ARN=$CLUSTER_ARN" >> $GITHUB_OUTPUT
+          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_OUTPUT
+          echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_OUTPUT
       
   init-database:
     needs: deploy
