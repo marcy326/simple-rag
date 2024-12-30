@@ -55,12 +55,9 @@ jobs:
         id: terraform_output
         run: |
           cd infra
-          terraform output -json > output.json
-          {
-            echo "CLUSTER_ARN=$(jq -r '.cluster_arn.value' output.json)"
-            echo "SECRET_ARN=$(jq -r '.secret_arn.value' output.json)"
-            echo "DATABASE_NAME=$(jq -r '.database_name.value' output.json)"
-          } >> $GITHUB_OUTPUT
+          echo "CLUSTER_ARN=$(terraform output -raw cluster_arn)" >> $GITHUB_OUTPUT
+          echo "SECRET_ARN=$(terraform output -raw secret_arn)" >> $GITHUB_OUTPUT
+          echo "DATABASE_NAME=$(terraform output -raw database_name)" >> $GITHUB_OUTPUT
       
   init-database:
     needs: deploy
