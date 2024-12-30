@@ -56,23 +56,43 @@ jobs:
         run: |
           cd infra
           terraform output -json > output.json
-          cat output.json
-          CLUSTER_ARN=$(jq -r '.cluster_arn.value' output.json)
-          SECRET_ARN=$(jq -r '.secret_arn.value' output.json)
-          DATABASE_NAME=$(jq -r '.database_name.value' output.json)
-          echo "CLUSTER_ARN=$CLUSTER_ARN" >> $GITHUB_OUTPUT
-          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_OUTPUT
-          echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_OUTPUT
+          {
+            echo "CLUSTER_ARN=$(jq -r '.cluster_arn.value' output.json)"
+            echo "SECRET_ARN=$(jq -r '.secret_arn.value' output.json)"
+            echo "DATABASE_NAME=$(jq -r '.database_name.value' output.json)"
+          } >> $GITHUB_OUTPUT
       
-      - name: Initialize Database
+  init-database:
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+
+      - name: Create Vector Extension
         run: |
           aws rds-data execute-statement \
-            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
-            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
-            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
+            --resource-arn "${{ needs.deploy.outputs.cluster_arn }}" \
+            --secret-arn "${{ needs.deploy.outputs.secret_arn }}" \
+            --database "${{ needs.deploy.outputs.database_name }}" \
             --sql "CREATE EXTENSION IF NOT EXISTS vector;"
+
+      - name: Create Text Embeddings Table
+        run: |
           aws rds-data execute-statement \
-            --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
-            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
-            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
-            --sql "CREATE TABLE IF NOT EXISTS text_embeddings ( id SERIAL PRIMARY KEY, filename TEXT NOT NULL, content TEXT NOT NULL, embedding VECTOR(1536), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );"
+            --resource-arn "${{ needs.deploy.outputs.cluster_arn }}" \
+            --secret-arn "${{ needs.deploy.outputs.secret_arn }}" \
+            --database "${{ needs.deploy.outputs.database_name }}" \
+            --sql "
+              CREATE TABLE IF NOT EXISTS text_embeddings (
+                id SERIAL PRIMARY KEY,
+                filename TEXT NOT NULL,
+                content TEXT NOT NULL,
+                embedding VECTOR(1536),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              );"
