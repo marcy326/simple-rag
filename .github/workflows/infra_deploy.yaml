@@ -84,8 +84,8 @@ jobs:
         run: |
           aws rds-data execute-statement \
             --resource-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
-            --secret-arn "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
-            --database "${{ steps.terraform_output.outputs.CLUSTER_ARN }}" \
+            --secret-arn "${{ steps.terraform_output.outputs.SECRET_ARN }}" \
+            --database "${{ steps.terraform_output.outputs.DATABASE_NAME }}" \
             --sql "
               CREATE TABLE IF NOT EXISTS text_embeddings (
                 id SERIAL PRIMARY KEY,
